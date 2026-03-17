@@ -103,15 +103,14 @@ public class AdminServiceImpl implements AdminService {
 	public void deleteCaseWorker(Long id) {
 
 		logger.info("Deleting CaseWorker with id: {}", id);
+		if (workerRepository.existsById(id)) {
+			workerRepository.deleteById(id);
 
-		CaseWorker worker = workerRepository.findById(id).orElseThrow(() -> {
+			logger.info("CaseWorker deleted successfully with id: {}", id);
+		} else {
+
 			logger.error("CaseWorker not found with id: {}", id);
-			return new RuntimeException("CaseWorker Not Found");
-		});
-
-		workerRepository.delete(worker);
-
-		logger.info("CaseWorker deleted successfully with id: {}", id);
+		}
 	}
 
 	@Override
@@ -152,18 +151,16 @@ public class AdminServiceImpl implements AdminService {
 
 		logger.info("Status updated successfully for CaseWorker id: {}", id);
 	}
-	
+
 	@Override
 	public CaseWorkerResponseDto login(String email, String password) {
-		if(workerRepository.existsByEmail(email)) {
-			CaseWorker worker=workerRepository.findByEmail(email);
-			worker.getPassword();
+		if (workerRepository.existsByEmail(email)) {
+			CaseWorker worker = workerRepository.findByEmailAndPassword(email,password);
 			CaseWorkerResponseDto responseDto = mapper.map(worker, CaseWorkerResponseDto.class);
 			return responseDto;
+		} else {
+			throw new InvalidCredentialsException("Invalid Credentials...!");
 		}
-		else {
-	  throw new InvalidCredentialsException("Invalid Credentials...!");
-	}
 	}
 
 	// ================= Random Password =================

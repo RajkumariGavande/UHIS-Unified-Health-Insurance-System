@@ -12,4 +12,6 @@ public interface CaseWorkerRepository extends JpaRepository<CaseWorker,Long>{
 
 	CaseWorker findByEmail(String email);
 
+	CaseWorker findByEmailAndPassword(String email,String password);
+
 }
